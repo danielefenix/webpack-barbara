@@ -1,0 +1,33 @@
+{
+  "name": "webpack-barbara",
+  "version": "1.0.0",
+  "description": "Repo di test per webpack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=develop webpack-dev-server --display-error-details --progress --color --content-base dev  --inline --hot",
+    "build": "NODE_ENV=production webpack --display-error-details"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielefenix/webpack-barbara.git"
+  },
+  "author": "Daniele Salvatore <daniele.salvatore@fao.org> (http://fenix.fao.org/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/danielefenix/webpack-barbara/issues"
+  },
+  "homepage": "https://github.com/danielefenix/webpack-barbara#readme",
+  "devDependencies": {
+    "css-loader": "^0.25.0",
+    "html-webpack-plugin": "^2.22.0",
+    "style-loader": "^0.13.1",
+    "webpack": "^1.13.2",
+    "webpack-dev-server": "^1.16.2"
+  },
+  "dependencies": {
+    "fenix-ui-filter": "^3.0.0-beta.8",
+    "jquery": "^3.1.1",
+    "toastr": "^2.1.2"
+  }
+}
