@@ -1,43 +1,90 @@
 var distFolderPath = "dist",
     demoFolderPath = "demo",
     devFolderPath = "dev",
-    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    webpack = require('webpack'),
     packageJson = require("./package.json"),
+    ExtractTextPlugin = require("extract-text-webpack-plugin"),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    CleanWebpackPlugin = require('clean-webpack-plugin'),
     Path = require('path'),
-    webpack = require('webpack');
+    dependencies = Object.keys(packageJson.dependencies);
 
 module.exports = {
-    entry: "./src/js/index.js",
+
+    debug: isProduction(false, true),
+
+    devtool: isProduction('source-map', 'eval'),
+
+    entry: getEntry(),
 
     output: getOutput(),
 
     resolve: {
         root: Path.resolve(__dirname),
         alias: {
+            'bootstrap-table' : Path.join(__dirname, 'node_modules/bootstrap-table/dist/bootstrap-table.min.js'),
             handlebars: Path.join(__dirname, 'node_modules/handlebars/dist/handlebars.js'),
             jquery: Path.join(__dirname, 'node_modules/jquery/dist/jquery')
         }
     },
 
-    module : {
-        loaders : [
-            { test: /\.css$/, loader: "style!css" }
+    externals: isProduction(dependencies, undefined),
+
+    module: {
+        loaders: [
+            isProduction(
+                {test: /\.css$/, loader: ExtractTextPlugin.extract("style-loader", "css-loader")},
+                {test: /\.css$/, loader: "style-loader!css-loader"}
+            ),
+            {test: /\.hbs$/, loader: "handlebars-loader"},
+            {test: /\.json/, loader: "json-loader"},
+            {test: /\.png$/, loader: "url-loader?limit=100000"},
+            {test: /\.jpg$/, loader: "file-loader?name=[name].[ext]&limit=100000"},
+            {test: /\.svg/, loader: "file-loader?name=[name].[ext]&limit=100000"},
+            {test: /\.gif/, loader: "file-loader?name=[name].[ext]&limit=100000"},
+
+            //Bootstrap loader
+            {test: /bootstrap\/js\//, loader: 'imports?jQuery=jquery'},
+            {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/font-woff"},
+            {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/font-woff"},
+            {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url?limit=10000&minetype=application/octet-stream"},
+            {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file"}
         ]
     },
 
     plugins: clearArray([
         new webpack.ProvidePlugin({$: "jquery", jQuery: "jquery"}),
-        new HtmlWebpackPlugin({
-            inject: "body",
-            template: "dev/index.template.html"
-        }),
+        isProduction(new CleanWebpackPlugin([distFolderPath]), undefined),
         isProduction(new webpack.optimize.UglifyJsPlugin({
             compress: {warnings: false},
             output: {comments: false}
+        })),
+        isProduction(new ExtractTextPlugin(packageJson.name + '.min.css')),
+        isDevelop(new HtmlWebpackPlugin({
+            inject: "body",
+            template: devFolderPath + "/index.template.html"
         }))
     ])
 };
 
+function getEntry() {
+
+    var entry = {};
+
+    switch (getEnvironment()) {
+
+        case "demo" :
+            entry["app"] = ["demo/src/js/demo.js"];
+            break;
+        case "develop" :
+            entry["app"] = ["dev/src/js/dev.js"];
+            break;
+        default :
+            entry["app"] = ["./src/js/index.js"];
+    }
+
+    return entry;
+}
 
 function getOutput() {
 
