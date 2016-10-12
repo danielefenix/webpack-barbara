@@ -1,8 +1,9 @@
 define([
     "jquery",
     "fenix-ui-filter",
+    "fenix-ui-analysis",
     "toastr"
-], function ($, Filter, Toastr) {
+], function ($, Filter, Toastr, Analysis) {
 
     function App(){
 
@@ -12,6 +13,8 @@ define([
         this._testJquery();
 
         this._testFilter();
+
+        this._testAnalysis();
 
         this._testToastr();
     }
@@ -47,6 +50,25 @@ define([
             }
         })
     };
+
+
+    App.prototype._testAnalysis = function () {
+
+            var analysis = new Analysis({
+                container: document.querySelector('#fx-analysis-container'),
+                // listenToCatalog: {
+                //     active: true,
+                //     event: 'fx.widget.catalog.select'
+                // },
+                // stack: {
+                //     active: true,
+                //     container: document.querySelector('#fx-modules-stack-container')
+                // },
+                // session: {
+                //     active: false
+                // }
+            }).init();
+        };
 
     App.prototype._testToastr = function () {
 
