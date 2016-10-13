@@ -70,6 +70,9 @@ define([
         // fenix-ui-catalog
         require("../../../node_modules/fenix-ui-catalog/dist/fenix-ui-catalog.min.css");
 
+        //fenix-ui-analisys
+        require("../../../node_modules/fenix-ui-analysis/dist/fenix-ui-analysis.min.css");
+
     };
 
     return new Dev();
